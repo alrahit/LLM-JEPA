@@ -1,0 +1,31 @@
+{
+  "add_prefix_space": false,
+  "backend": "tokenizers",
+  "bos_token": null,
+  "clean_up_tokenization_spaces": false,
+  "eos_token": "<|im_end|>",
+  "errors": "replace",
+  "extra_special_tokens": [
+    "<|predictor_1|>",
+    "<|predictor_2|>",
+    "<|predictor_3|>",
+    "<|predictor_4|>",
+    "<|predictor_5|>",
+    "<|predictor_6|>",
+    "<|predictor_7|>",
+    "<|predictor_8|>",
+    "<|predictor_9|>",
+    "<|predictor_10|>",
+    "<|start_header_id|>",
+    "<|end_header_id|>",
+    "<|eot_id|>",
+    "<|perception|>"
+  ],
+  "is_local": false,
+  "local_files_only": false,
+  "model_max_length": 131072,
+  "pad_token": "<|endoftext|>",
+  "split_special_tokens": false,
+  "tokenizer_class": "Qwen2Tokenizer",
+  "unk_token": null
+}
