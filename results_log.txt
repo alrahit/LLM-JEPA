@@ -1,0 +1,25 @@
+===== LLM-JEPA RESULTS LOG =====
+
+--- ACCURACY RESULTS ---
+Regular:     0.3835  (767/2000)
+lbd=0:       0.3785  (757/2000)
+JEPA lbd0.5: 0.4075  (815/2000)
+JEPA lbd1.0: 0.4310  (862/2000)
+pred=1:      0.3990  (798/2000)
+pred=2:      PENDING
+
+--- R2 LINEARITY RESULTS ---
+lbd=0:       0.0978
+Regular:     0.1005
+JEPA lbd0.5: 0.1185  (+17% vs Regular)
+JEPA lbd1.0: 0.1169  (+25% vs Regular)
+pred=1:      0.3990  (798/2000)
+pred=2:      PENDING
+
+--- TRAINING LOSS ---
+Regular:     0.461
+lbd=0:       7.471
+JEPA lbd0.5: 7.411
+JEPA lbd1.0: 7.851
+pred=1:      7.784
+pred=2:      PENDING
