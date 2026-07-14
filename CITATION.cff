@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you utilize this research extension or code in your work, please cite it as below."
+authors:
+- family-names: "Rahit"
+  given-names: "Al"
+title: "LLM-JEPA-Research: Linear View-Alignment in Large Language Models"
+version: 1.0.0
+date-released: 2026-07-14
+url: "https://github.com/alrahit/LLM-JEPA"

@@ -1,21 +1,25 @@
-__pycache__/
-*.pyc
+# Deep Learning Models and Weights
+model-*/
+fine-tuned/
+checkpoints/
+*.bin
+*.pt
+*.pth
+
+# Data and Archives
+*.zip
+*.tar.gz
+*.tgz
+datasets/
+
+# Environment and OS
 .venv/
 venv/
+ENV/
+env/
+.DS_Store
+Thumbs.db
 
+# IDEs
 .vscode/
 .idea/
-
-*.log
-
-*.ckpt
-*.pt
-*.bin
-*.safetensors
-
-fine-tuned/
-model-regular/
-outputs/
-runs/
-
-*.zip
