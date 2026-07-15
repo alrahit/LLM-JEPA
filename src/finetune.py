@@ -26,6 +26,16 @@ from transformers import (
 from peft import LoraConfig, get_peft_model, TaskType
 import argparse
 
+# --- LinAlign add-on (self-tuning lambda). Inert unless --linalign is passed. ---
+try:
+    from linalign import LinAlignController, LinAlignConfig
+except ImportError:
+    try:
+        from src.linalign import LinAlignController, LinAlignConfig
+    except ImportError:
+        LinAlignController = None
+        LinAlignConfig = None
+
 
 def get_messages(model_name, messages):
     if "google/gemma" in model_name:
@@ -318,105 +328,6 @@ def load_and_prepare_dataset(data_file, tokenizer, model_name,
     return tokenized_dataset
 
 
-# def use_llama_3_2_chat_template(tokenizer):
-#     llama_3_2_chat_template = """{{- bos_token }}
-# {%- if custom_tools is defined %}
-#     {%- set tools = custom_tools %}
-# {%- endif %}
-# {%- if not tools_in_user_message is defined %}
-#     {%- set tools_in_user_message = true %}
-# {%- endif %}
-# {%- if not date_string is defined %}
-#     {%- if strftime_now is defined %}
-#         {%- set date_string = strftime_now("%d %b %Y") %}
-#     {%- else %}
-#         {%- set date_string = "26 Jul 2024" %}
-#     {%- endif %}
-# {%- endif %}
-# {%- if not tools is defined %}
-#     {%- set tools = none %}
-# {%- endif %}
-
-# {#- This block extracts the system message, so we can slot it into the right place. #}
-# {%- if messages[0]['role'] == 'system' %}
-#     {%- set system_message = messages[0]['content']|trim %}
-#     {%- set messages = messages[1:] %}
-# {%- else %}
-#     {%- set system_message = "" %}
-# {%- endif %}
-
-# {#- System message #}
-# {{- "<|start_header_id|>system<|end_header_id|>\n\n" }}
-# {%- if tools is not none %}
-#     {{- "Environment: ipython\n" }}
-# {%- endif %}
-# {{- "Cutting Knowledge Date: December 2023\n" }}
-# {{- "Today Date: " + date_string + "\n\n" }}
-# {%- if tools is not none and not tools_in_user_message %}
-#     {{- "You have access to the following functions. To call a function, please respond with JSON for a function call." }}
-#     {{- 'Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}.' }}
-#     {{- "Do not use variables.\n\n" }}
-#     {%- for t in tools %}
-#         {{- t | tojson(indent=4) }}
-#         {{- "\n\n" }}
-#     {%- endfor %}
-# {%- endif %}
-# {{- system_message }}
-# {{- "<|eot_id|>" }}
-
-# {#- Custom tools are passed in a user message with some extra guidance #}
-# {%- if tools_in_user_message and not tools is none %}
-#     {#- Extract the first user message so we can plug it in here #}
-#     {%- if messages | length != 0 %}
-#         {%- set first_user_message = messages[0]['content']|trim %}
-#         {%- set messages = messages[1:] %}
-#     {%- else %}
-#         {{- raise_exception("Cannot put tools in the first user message when there's no first user message!") }}
-# {%- endif %}
-#     {{- '<|start_header_id|>user<|end_header_id|>\n\n' -}}
-#     {{- "Given the following functions, please respond with a JSON for a function call " }}
-#     {{- "with its proper arguments that best answers the given prompt.\n\n" }}
-#     {{- 'Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}.' }}
-#     {{- "Do not use variables.\n\n" }}
-#     {%- for t in tools %}
-#         {{- t | tojson(indent=4) }}
-#         {{- "\n\n" }}
-#     {%- endfor %}
-#     {{- first_user_message + "<|eot_id|>"}}
-# {%- endif %}
-
-# {%- for message in messages %}
-#     {%- if not (message.role == 'ipython' or message.role == 'tool' or 'tool_calls' in message) %}
-#         {{- '<|start_header_id|>' + message['role'] + '<|end_header_id|>\n\n'+ message['content'] | trim + '<|eot_id|>' }}
-#     {%- elif 'tool_calls' in message %}
-#         {%- if not message.tool_calls|length == 1 %}
-#             {{- raise_exception("This model only supports single tool-calls at once!") }}
-#         {%- endif %}
-#         {%- set tool_call = message.tool_calls[0].function %}
-#         {{- '<|start_header_id|>assistant<|end_header_id|>\n\n' -}}
-#         {{- '{"name": "' + tool_call.name + '", ' }}
-#         {{- '"parameters": ' }}
-#         {{- tool_call.arguments | tojson }}
-#         {{- "}" }}
-#         {{- "<|eot_id|>" }}
-#     {%- elif message.role == "tool" or message.role == "ipython" %}
-#         {{- "<|start_header_id|>ipython<|end_header_id|>\n\n" }}
-#         {%- if message.content is mapping or message.content is iterable %}
-#             {{- message.content | tojson }}
-#         {%- else %}
-#             {{- message.content }}
-#         {%- endif %}
-#         {{- "<|eot_id|>" }}
-#     {%- endif %}
-# {%- endfor %}
-# {%- if add_generation_prompt %}
-#     {{- '<|start_header_id|>assistant<|end_header_id|>\n\n' }}
-# {%- endif %}
-# """
-#     if tokenizer.chat_template != llama_3_2_chat_template:
-#         tokenizer.chat_template = llama_3_2_chat_template
-
-
 def setup_model_and_tokenizer(model_name, use_lora=True, lora_rank=16, pretrain=False, debug=0, seed=None):
     """Setup model and tokenizer with optional LoRA"""
     
@@ -427,8 +338,6 @@ def setup_model_and_tokenizer(model_name, use_lora=True, lora_rank=16, pretrain=
     else:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         assert tokenizer.chat_template is not None, f"{model_name} does not have chat template."
-    
-    # use_llama_3_2_chat_template(tokenizer)
     
     # Add special tokens if not present
     if "microsoft/phi" in model_name:
@@ -532,6 +441,19 @@ class RepresentationTrainer(Trainer):
         self.jepa_mse = kwargs.pop('jepa_mse', False)
         self.infonce = kwargs.pop('infonce', False)
         self.jepa_ratio = kwargs.pop('jepa_ratio', -1.0)
+        # >>> LinAlign additions <<<
+        self.use_linalign = kwargs.pop('use_linalign', False)
+        _linalign_cfg = kwargs.pop('linalign_config', None)
+        self.linalign_log_path = kwargs.pop('linalign_log_path', None)
+        self.linalign_log_every = kwargs.pop('linalign_log_every', 10)
+        if self.use_linalign:
+            assert LinAlignController is not None, \
+                "LinAlign requested but src/linalign.py could not be imported."
+            self.linalign = LinAlignController(_linalign_cfg or LinAlignConfig())
+            self.lbd = self.linalign.lam  # start from controller's lambda
+        else:
+            self.linalign = None
+        # >>> end LinAlign additions <<<
         assert self.jepa_l2 + self.jepa_mse <= 1, "Only one of jepa_l2 and jepa_mse can be True."
         super().__init__(*args, **kwargs)
     
@@ -619,6 +541,7 @@ class RepresentationTrainer(Trainer):
                                             inputs["attention_mask_user"],
                                             inputs["attention_mask_assistant"]], dim=0),
             }
+            skip_jepa = False
         if self.debug == 7 and torch.cuda.current_device() == 0:
             torch.set_printoptions(threshold=float("inf"))
             torch.set_printoptions(linewidth=360)
@@ -664,7 +587,7 @@ class RepresentationTrainer(Trainer):
             user_hidden_states = outputs.hidden_states[-1][batch_size: batch_size * 2]
             assistant_hidden_states = outputs.hidden_states[-1][batch_size * 2:]
 
-        if self.debug == 2 and torch.cuda.current_device() == 0:
+        if self.debug == 2 and torch.cuda.current_device() == 0 and user_hidden_states is not None:
             print(f"====={user_hidden_states.shape}=====")
             print(f"====={assistant_hidden_states.shape}=====")
        
@@ -701,6 +624,10 @@ class RepresentationTrainer(Trainer):
         # Compute representation similarity loss
         user_hidden_states = forward_results['user_hidden_states']
         assistant_hidden_states = forward_results['assistant_hidden_states']
+
+        # Initialize so LinAlign block below is always safe to reference.
+        user_embedding = None
+        assistant_embedding = None
         
         # Get embeddings (using last token of each sequence)
         if user_hidden_states is not None:
@@ -736,6 +663,19 @@ class RepresentationTrainer(Trainer):
         else:
             jepa_loss = 0.0
 
+        # >>> LinAlign: self-tune lambda from batch Text->Code linearity <<<
+        if self.use_linalign and (user_hidden_states is not None):
+            lam = self.linalign.step(user_embedding, assistant_embedding)
+            self.lbd = lam  # apply the auto-tuned weight this step
+            gs = int(self.state.global_step) if getattr(self, "state", None) is not None else self.linalign._n_calls
+            if torch.cuda.current_device() == 0 and (gs % self.linalign_log_every == 0):
+                self.linalign.log_row(gs, extra={
+                    "lm_loss": float(lm_loss.detach()),
+                    "jepa_loss": float(jepa_loss.detach() if torch.is_tensor(jepa_loss) else jepa_loss),
+                })
+                self.linalign.print_row(gs)
+        # >>> end LinAlign <<<
+
         total_loss = self.gamma * lm_loss + self.lbd * jepa_loss
 
         if self.debug == 2 and torch.cuda.current_device() == 0:
@@ -745,7 +685,7 @@ class RepresentationTrainer(Trainer):
             exit(0)
 
         if self.debug == 5 and torch.cuda.current_device() == 0:
-            print(f"llm_loss: {lm_loss.float()}, jepa_loss: {jepa_loss.float()}")
+            print(f"llm_loss: {lm_loss.float()}, jepa_loss: {jepa_loss.float() if torch.is_tensor(jepa_loss) else jepa_loss}, lambda: {self.lbd}")
 
         return (total_loss, main_outputs) if return_outputs else total_loss
 
@@ -816,6 +756,21 @@ def main():
     parser.add_argument("--use_default_data_collator", action="store_true", help="When set, Use `default_data_collator`.")
     parser.add_argument("--unmask_assistant_special_tokens", action="store_true", help="When set, unmask assistant special tokens.")
 
+    # >>> LinAlign CLI flags (inert unless --linalign is passed) <<<
+    parser.add_argument("--linalign", action="store_true", help="Enable LinAlign self-tuning of lambda.")
+    parser.add_argument("--linalign_lambda_init", type=float, default=1.0, help="Starting lambda.")
+    parser.add_argument("--linalign_lambda_min", type=float, default=0.0, help="Lower safety rail for lambda.")
+    parser.add_argument("--linalign_lambda_max", type=float, default=16.0, help="Upper safety rail for lambda.")
+    parser.add_argument("--linalign_eta", type=float, default=0.5, help="Controller rate. Set 0.0 to FREEZE lambda (calibration mode).")
+    parser.add_argument("--linalign_tau", type=float, default=0.05, help="Target linearity residual (calibrate per dataset).")
+    parser.add_argument("--linalign_ema", type=float, default=0.9, help="EMA smoothing of the per-batch residual S.")
+    parser.add_argument("--linalign_step_cap", type=float, default=1.25, help="Max multiplicative lambda change per update.")
+    parser.add_argument("--linalign_warmup", type=int, default=20, help="Steps to keep lambda fixed before adapting.")
+    parser.add_argument("--linalign_min_batch", type=int, default=16, help="Accumulate this many view-pairs before computing S (needed since batch_size=1).")
+    parser.add_argument("--linalign_update_every", type=int, default=1, help="Update lambda every N steps.")
+    parser.add_argument("--linalign_log", type=str, default=None, help="Path to save the lambda/S trace JSON.")
+    # >>> end LinAlign flags <<<
+
     args = parser.parse_args()
     
     # Validate arguments
@@ -824,7 +779,15 @@ def main():
     
     if args.train_file and args.data_file:
         parser.error("Cannot use both --train_file and --data_file. Choose one.")
-    
+
+    if args.linalign and args.regular:
+        parser.error("--linalign has no effect with --regular (no JEPA loss). Remove one.")
+    if args.linalign and args.additive_mask:
+        print("WARNING: --linalign with --additive_mask makes user==assistant embeddings; "
+              "the linearity signal will be ~0. Use the default 3-forward-pass path.")
+    if args.linalign and LinAlignController is None:
+        parser.error("--linalign requires src/linalign.py, which could not be imported.")
+
     if torch.cuda.current_device() == 0:
         print("=== Fine-tuning Script ===")
 
@@ -842,6 +805,9 @@ def main():
         print(f"Output: {args.output_dir}")
         print(f"Using LoRA: {args.lora}")
         print(f"LoRA rank: {args.lora_rank}")
+        if args.linalign:
+            print(f"LinAlign: ENABLED (eta={args.linalign_eta}, tau={args.linalign_tau}, "
+                  f"init={args.linalign_lambda_init}, min_batch={args.linalign_min_batch})")
     
     # Check if running with torchrun
     world_size = int(os.environ.get('WORLD_SIZE', 1))
@@ -1024,6 +990,21 @@ def main():
     else:
         if torch.cuda.current_device() == 0:
             print("\n3. Initializing representation trainer...")
+        # Build LinAlign config from CLI (only used if --linalign is set).
+        _linalign_cfg = None
+        if args.linalign and LinAlignConfig is not None:
+            _linalign_cfg = LinAlignConfig(
+                lambda_init=args.linalign_lambda_init,
+                lambda_min=args.linalign_lambda_min,
+                lambda_max=args.linalign_lambda_max,
+                eta=args.linalign_eta,
+                tau=args.linalign_tau,
+                ema_decay=args.linalign_ema,
+                step_cap=args.linalign_step_cap,
+                warmup_steps=args.linalign_warmup,
+                update_every=args.linalign_update_every,
+                min_batch=args.linalign_min_batch,
+            )
         trainer = RepresentationTrainer(
             model=model,
             args=training_args,
@@ -1041,6 +1022,12 @@ def main():
             jepa_mse=args.jepa_mse,
             infonce=args.infonce,
             jepa_ratio=args.jepa_ratio,
+            # >>> LinAlign kwargs <<<
+            use_linalign=args.linalign,
+            linalign_config=_linalign_cfg,
+            linalign_log_path=args.linalign_log,
+            linalign_log_every=args.eval_steps,
+            # >>> end <<<
         )
     
     if torch.cuda.current_device() == 0 and args.lora:
@@ -1099,6 +1086,15 @@ def main():
     
     if torch.cuda.current_device() == 0:
         print(f"\n✅ Training completed! Model saved to {args.output_dir}")
+
+    # >>> LinAlign: persist the lambda / linearity trace for the paper figures <<<
+    if (torch.cuda.current_device() == 0 and args.linalign
+            and args.linalign_log and getattr(trainer, "linalign", None) is not None):
+        try:
+            trainer.linalign.save_history(args.linalign_log)
+        except Exception as e:
+            print(f"WARNING: could not save LinAlign history: {e}")
+    # >>> end <<<
     
     if torch.cuda.current_device() == 0:
         print("\n🎉 Fine-tuning finished successfully!")
