@@ -1,0 +1,43 @@
+﻿===== GSM8K DATASET RESULTS =====
+Dataset: GSM8K (Grade School Math, 8K)
+Model: Qwen2.5-1.5B-Instruct + LoRA rank=8
+Test set: 1319 examples
+
+--- ACCURACY RESULTS (recomputed offline, NOT the live "Success Rate" printed by evaluate.py) ---
+NOTE: evaluate.py's live-printed "Success Rate" was found to be unreliable/buggy
+(reported ~0.08% for every model). All numbers below are recomputed directly
+from saved generations using the same "\n#### (.+)$" scoring regex.
+
+model-regular:       0.3541  (467/1319)
+model-lbd0:          0.3533  (466/1319)
+model-jepa-lbd0.5:   0.3472  (458/1319)
+model-jepa-lbd1.0:   0.3465  (457/1319)
+model-pred1:         0.3465  (457/1319)
+model-pred2:         0.3525  (465/1319)
+model-linalign:      0.3525  (465/1319)
+
+--- R2 LINEARITY RESULTS (JEPA model vs its paired Regular run) ---
+model-lbd0:          -57.9970  (regular -55.6994 in that run)
+model-jepa-lbd0.5:    -7.4469  (regular -59.0646 in that run, +87.4%)
+model-jepa-lbd1.0:    -1.2140  (regular -59.0901 in that run, +97.9%)
+model-pred1:          -5.2932  (regular -59.8827 in that run, +91.2%)
+model-pred2:          -0.8556  (regular -57.4737 in that run, +98.5%)
+model-linalign:      -54.0186  (regular -58.8197 in that run, +8.2%)
+
+--- HYPOTHESIS STATUS ---
+P1 (JEPA R2 > Regular R2):         SUPPORTED (every JEPA variant beats its paired Regular)
+P2 (Higher lbd = Higher accuracy): NOT SUPPORTED (accuracy flat within ~0.8pp across all lambda values)
+P3 (pred=0 >= pred=1,2 accuracy):  REVERSED on R2 (pred2 most linear, pred0 least linear -
+                                    opposite of synth's ordering); accuracy flat across pred0/1/2
+
+--- SELF-TUNING (LINALIGN) DIAGNOSIS ---
+Lambda collapsed to ~5.5e-21 (near zero) by end of training, down from init=1.0.
+Root cause: S (linearity score) values (~1e-7) sat far below --linalign_tau 0.05,
+causing the exponential update rule to shrink lambda every step with no recovery.
+Tau=0.05 is miscalibrated for this S measurement's scale on GSM8K - not a failure
+of the self-tuning concept itself, but a default that needs per-dataset calibration.
+
+--- COMPARISON NOTE (vs Synth) ---
+On Synth: both accuracy AND R2 improved together with higher lambda (full hypothesis supported).
+On GSM8K: R2 improves sharply and monotonically with lambda/JEPA, but accuracy stays flat -
+linearity and task accuracy appear decoupled on this harder, longer-form reasoning task.
