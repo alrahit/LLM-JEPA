@@ -1,0 +1,35 @@
+﻿===== SYNTH DATASET RESULTS =====
+Dataset: Synth (Natural Language -> Regular Expression)
+Model: Qwen2.5-1.5B-Instruct + LoRA rank=8
+Test set: 2000 examples
+
+--- ACCURACY RESULTS ---
+model-regular:     0.3835  (767/2000)
+model-lbd0:        0.3785  (757/2000)
+model-jepa-lbd0.5: 0.4075  (815/2000)
+model-jepa-lbd1.0: 0.4310  (862/2000)
+model-pred0:       0.4075  (815/2000)
+model-pred1:       0.3990  (798/2000)
+model-pred2:       0.4075  (815/2000)
+
+--- R2 LINEARITY RESULTS ---
+model-lbd0:        0.0978  (-3.2% vs Regular)
+model-regular:     0.1005  (baseline)
+model-jepa-lbd0.5: 0.1185  (+17% vs Regular)
+model-jepa-lbd1.0: 0.1169  (+25% vs Regular)
+model-pred0:       0.1185  (+17% vs Regular)
+model-pred1:       0.0809  (-19% vs Regular)
+model-pred2:       0.1217  (+29% vs Regular)
+
+--- TRAINING LOSS ---
+model-regular:     0.461
+model-lbd0:        7.471
+model-jepa-lbd0.5: 7.411
+model-jepa-lbd1.0: 7.851
+model-pred1:       7.784
+model-pred2:       7.779
+
+--- HYPOTHESIS STATUS ---
+P1 (JEPA R2 > Regular R2):        SUPPORTED (+17%)
+P2 (Higher lbd = Higher accuracy): SUPPORTED (37.85% to 43.10%)
+P3 (pred=0 >= pred=1,2 accuracy):  SUPPORTED (40.75% >= 39.90%)
