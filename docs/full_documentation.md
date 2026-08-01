@@ -2,7 +2,8 @@
 ## Linear View-Alignment in Large Language Models
 ### Complete Research Documentation
 
-**Researcher:** Al Rahit  
+**Research led by:** Gollam Rabby, Junior Research Group Leader (Nachwuchsgruppenleiter)
+**Contributor:** Al Rahit  
 **Date:** July 2026  
 **Model:** Qwen2.5-1.5B-Instruct  
 **Dataset:** Synth (Natural Language → Regular Expression)
