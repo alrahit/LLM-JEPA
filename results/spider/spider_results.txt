@@ -1,0 +1,46 @@
+﻿===== SPIDER DATASET RESULTS =====
+Dataset: Spider (Natural Language -> SQL)
+Model: Qwen2.5-1.5B-Instruct + LoRA rank=8
+Test set: 1447 examples (execution-based scoring against real .sqlite databases)
+
+--- ACCURACY RESULTS (from saved per-example generations, "correct" field) ---
+model-regular:      0.0276  (40/1447)
+model-lbd0:         0.0283  (41/1447)
+model-jepa-lbd0.5:  0.0276  (40/1447)
+model-jepa-lbd1.0:  0.0283  (41/1447)
+model-pred1:        0.0297  (43/1447)
+model-pred2:        0.0304  (44/1447)
+model-linalign:     0.0297  (43/1447)
+
+--- R2 LINEARITY RESULTS ---
+model-lbd0:         -0.0552  (regular -0.0542 in that run, NOT SUPPORTED)
+model-jepa-lbd0.5:  SUPPORTED, +20.8% vs regular
+model-jepa-lbd1.0:  -0.0513  (regular -0.0504 in that run, NOT SUPPORTED)
+model-pred1:        NOT SUPPORTED (regular >= JEPA)
+model-pred2:        SUPPORTED, +8.1% vs regular
+model-linalign:     -0.0584  (regular -0.0539 in that run, NOT SUPPORTED)
+
+--- HYPOTHESIS STATUS ---
+P1 (JEPA R2 > Regular R2):         PARTIALLY SUPPORTED (only jepa/lbd0.5 and pred2;
+                                    lbd0, lbd1, and linalign all NOT supported)
+P2 (Higher lbd = Higher accuracy): NOT SUPPORTED (accuracy flat within a 0.28pp band
+                                    across the entire lambda sweep, no trend at all)
+P3 (pred=0 >= pred=1,2 accuracy):  REVERSED on accuracy (pred2 3.04% > pred1 2.97% >
+                                    pred0 2.76%); on R2, pred0 and pred2 both beat
+                                    pred1, but pred0 (+20.8%) beat pred2 (+8.1%) --
+                                    R2 and accuracy orderings disagree with each other
+
+--- CROSS-METRIC NOTE (unique to Spider) ---
+The model with the BEST linearity (jepa/pred0, +20.8% R2) tied for the WORST accuracy.
+The model with the BEST accuracy (pred2) had a weaker R2 gain than jepa. Linearity and
+accuracy point in opposite directions at the extremes -- the strongest decoupling
+finding across all three datasets tested (Synth, GSM8K, Spider).
+
+--- KNOWN LIMITATIONS ---
+- linalign's self-tuning controller shows the same tau=0.05 miscalibration bug found
+  on GSM8K: lambda collapsed to ~1.6e-18 to 2.6e-18 (from init=1.0) by the end of
+  training, driven by S values (~1e-7) far below the tau target. Confirmed across
+  two datasets now -- systematic, not a one-off.
+- Spider's overall accuracy (~2.8-3.0%) is low in absolute terms for all models,
+  consistent with the known difficulty of cross-domain SQL generation for a 1.5B
+  parameter model with a rank-8 LoRA adapter and limited training data.

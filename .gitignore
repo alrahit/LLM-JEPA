@@ -4,3 +4,7 @@ __pycache__/
 results/gsm8k/model-*/
 datasets/gsm8k_test_test.jsonl
 datasets/gsm8k_test_train.jsonl
+
+results/spider/model-*/
+datasets/spider_test_test.jsonl
+datasets/spider_test_train.jsonl

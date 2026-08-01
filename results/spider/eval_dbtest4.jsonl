@@ -1,0 +1,5 @@
+{"index": 0, "ground_truth": "SELECT count(*) FROM city AS T1 JOIN country AS T2 ON T1.country_id  =  T2.country_id WHERE T2.country  =  'Australia'", "generated": "SELECT count(*) FROM city WHERE country_code  =  'AU'", "correct": false}
+{"index": 1, "ground_truth": "SELECT min(bathroom_count) ,  max(bathroom_count) FROM Apartments", "generated": "SELECT min(bathrooms) ,  max(bathrooms) FROM apartment_rents", "correct": false}
+{"index": 2, "ground_truth": "SELECT test_result ,  COUNT(*) FROM Student_Tests_Taken GROUP BY test_result ORDER BY COUNT(*) DESC", "generated": "SELECT T1.test_result ,  COUNT(*) FROM TestResult AS T1 JOIN Student AS T2 ON T1.student_id  =  T2.student_id GROUP BY T1.test_result ORDER BY COUNT(*) DESC", "correct": false}
+{"index": 3, "ground_truth": "SELECT count(DISTINCT gender) FROM dorm", "generated": "SELECT count(DISTINCT gender) FROM dorms", "correct": false}
+{"index": 4, "ground_truth": "SELECT school FROM university WHERE founded  >  1850 OR affiliation  =  'Public'", "generated": "SELECT school FROM university WHERE year_founded  >  1850 OR type = \"Public\"", "correct": false}

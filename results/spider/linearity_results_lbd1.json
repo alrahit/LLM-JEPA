@@ -1,0 +1,8 @@
+{
+  "jepa_r2": -0.051297277212142944,
+  "regular_r2": -0.05039172247052193,
+  "difference": -0.0009055547416210175,
+  "hypothesis_supported": false,
+  "max_examples": 500,
+  "pca_components": 50
+}
