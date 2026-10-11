@@ -1,0 +1,9 @@
+﻿===== SYNTH DATASET FINAL ACCURACY =====
+Date: 2026-09-24
+Model: Qwen2-1.5B-Instruct
+
+1. Zero-Shot Baseline: 0.10%
+2. Standard SFT Baseline: 50.50% (1010/2000)
+3. LinAlign / InfoNCE (Hybrid JEPA): 52.70%
+
+Note: LinAlign outperforms standard SFT by +2.20% absolute.

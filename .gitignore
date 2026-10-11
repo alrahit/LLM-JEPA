@@ -8,3 +8,26 @@ datasets/gsm8k_test_train.jsonl
 results/spider/model-*/
 datasets/spider_test_test.jsonl
 datasets/spider_test_train.jsonl
+# --- hybrid_adaptive (added 2026-10-11) ---
+hybrid_adaptive/results/qwen/checkpoints/
+*.safetensors
+scratch/
+.venv/
+*_backup_*/
+*.zip
+inventory_results.csv
+hybrid_adaptive/archive/
+hybrid_adaptive/docs/code_excerpt*.txt
+hybrid_adaptive/docs/*_v0.txt
+*.BACKUP.json
+*COPY_BEFORE_RERUN.json
+*UNVERIFIED*
+
+hybrid_adaptive/results/*_hybrid_retrieval/
+datasets/synth_test_test.jsonl
+datasets/synth_test_train.jsonl
+hybrid_adaptive/results/qwen/
+
+datasets/synth_test_test.jsonl
+datasets/synth_test_train.jsonl
+hybrid_adaptive/results/qwen/

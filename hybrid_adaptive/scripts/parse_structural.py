@@ -1,12 +1,13 @@
 import json
 import re
+import os
 
 def normalize_text(text):
     """Removes extra whitespace and lowers text for a fair structural comparison."""
     if not text:
         return ""
     text = text.lower()
-    text = re.sub(r'\s+', ' ', text) # Replace all newlines and multiple spaces with a single space
+    text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
 def extract_structural_content(text, is_ground_truth=False):
@@ -14,16 +15,13 @@ def extract_structural_content(text, is_ground_truth=False):
     if not isinstance(text, str):
         return ""
         
-    # Ground truth usually doesn't have conversational filler, just normalize it
     if is_ground_truth:
         return normalize_text(text)
         
-    # 1. Look for markdown code blocks (e.g., ```sql ... ``` or ```json ... ```)
     match = re.search(r'```[a-zA-Z]*\s*(.*?)\s*```', text, re.DOTALL)
     if match:
         return normalize_text(match.group(1))
     
-    # 2. Fallback: If no markdown, try to strip common conversational prefixes
     lines = text.split('\n')
     clean_lines = []
     for line in lines:
@@ -38,6 +36,9 @@ def extract_structural_content(text, is_ground_truth=False):
     return normalize_text(result)
 
 def evaluate_dataset(file_path, dataset_name):
+    if not os.path.exists(file_path):
+        return
+        
     print(f"Parsing {dataset_name} results from: {file_path}")
     
     try:
@@ -47,7 +48,6 @@ def evaluate_dataset(file_path, dataset_name):
         print(f"  -> Error: Could not read file. {e}\n")
         return
 
-    # Extract the details list
     if isinstance(data, dict) and "details" in data:
         results_list = data["details"]
     elif isinstance(data, list):
@@ -68,7 +68,6 @@ def evaluate_dataset(file_path, dataset_name):
         
         if gt_clean and pred_clean:
             total += 1
-            # For SQL and structural data, if the exact ground truth is inside the prediction, it's correct
             if gt_clean == pred_clean or gt_clean in pred_clean:
                 correct += 1
                 
@@ -81,11 +80,13 @@ if __name__ == "__main__":
     print("========================================")
     print("          SYNTH DATASET RESULTS         ")
     print("========================================")
-    evaluate_dataset(r"hybrid_adaptive\results\synth_baseline_eval_results.json", "Baseline (Raw Qwen2-1.5B)")
+    evaluate_dataset(r"hybrid_adaptive\results\synth_baseline_eval_results.json", "Baseline (Zero-Shot)")
+    evaluate_dataset(r"hybrid_adaptive\results\synth_sft_eval_results.json", "Standard SFT Baseline")
     evaluate_dataset(r"hybrid_adaptive\results\synth_eval_results.json", "LinAlign Model (Ours)")
     
     print("========================================")
     print("         SPIDER DATASET RESULTS         ")
     print("========================================")
-    evaluate_dataset(r"hybrid_adaptive\results\spider_baseline_eval_results.json", "Baseline (Raw Qwen2-1.5B)")
+    evaluate_dataset(r"hybrid_adaptive\results\spider_baseline_eval_results.json", "Baseline (Zero-Shot)")
+    evaluate_dataset(r"hybrid_adaptive\results\spider_sft_eval_results.json", "Standard SFT Baseline")
     evaluate_dataset(r"hybrid_adaptive\results\spider_eval_results.json", "LinAlign Model (Ours)")

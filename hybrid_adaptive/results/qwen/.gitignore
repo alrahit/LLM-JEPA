@@ -1,0 +1,6 @@
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.jinja
+checkpoint-*/README.md

@@ -1,0 +1,8 @@
+﻿===== SPIDER DATASET FINAL ACCURACY =====
+Date: 2026-09-24
+Model: Qwen2-1.5B-Instruct
+
+1. Standard SFT Baseline: 4.84% (70/1447)
+2. LinAlign / InfoNCE (Hybrid JEPA): [PENDING]
+
+Note: Baseline established. Awaiting LinAlign results to measure structural learning gains.
