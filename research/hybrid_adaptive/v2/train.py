@@ -19,6 +19,15 @@ from torch.utils.data import DataLoader
 import core
 
 
+def sha256_file(path):
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def parse():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm", choices=["sft", "static"], required=True)
@@ -42,6 +51,8 @@ def parse():
     ap.add_argument("--dtype", choices=["bf16", "fp32"], default="bf16")
     ap.add_argument("--no_grad_ckpt", action="store_true")
     ap.add_argument("--save_every_epoch", action="store_true")
+    ap.add_argument("--val_file", default="", help="only hashed and recorded, never read for training")
+    ap.add_argument("--test_file", default="", help="only hashed and recorded, never read for training")
     a = ap.parse_args()
     if a.arm == "sft":
         if a.lam not in (None, 0.0):
@@ -62,8 +73,10 @@ def main():
     if os.path.exists(args.out_dir) and os.listdir(args.out_dir):
         sys.exit(f"ERROR: out_dir is not empty: {args.out_dir} (refusing to overwrite, pick a new --out_dir)")
     os.makedirs(args.out_dir, exist_ok=True)
+    cfg = vars(args)
+    cfg["data_sha256"] = {k: sha256_file(cfg[k]) for k in ("train_file", "val_file", "test_file") if cfg.get(k)}
     with open(os.path.join(args.out_dir, "args.json"), "w") as f:
-        json.dump(vars(args), f, indent=1)
+        json.dump(cfg, f, indent=1)
 
     torch.manual_seed(args.seed)
     dev = torch.device(args.device)
