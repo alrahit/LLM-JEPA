@@ -83,4 +83,7 @@ Runs are excluded only for hash mismatch. Failed or diverged runs are reported, 
 - [ ] Qwen2-1.5B-Instruct revision hash.
 - [ ] Llama-3.2-1B-Instruct revision hash, chat-template date handling, last-token offset, memory and speed.
 - [ ] Stage 1 learning-rate results per dataset and model (outcomes, not changes to the protocol).
-- [ ] Scorers for GSM8K, Rotten Tomatoes, Yelp, NQ-Open, HellaSwag.- 2026-11-04 (amendment 1): `Qwen/Qwen2-1.5B-Instruct` revision hash `ba1cf1846d7df0a0591d6c00649f57e798519da8` (Hugging Face cache at `D:\huggingface_cache\hub`).
+- [ ] Scorers for GSM8K, Rotten Tomatoes, Yelp, NQ-Open, HellaSwag.
+- 2026-11-04 (amendment 1): `Qwen/Qwen2-1.5B-Instruct` revision hash `ba1cf1846d7df0a0591d6c00649f57e798519da8` (Hugging Face cache at `D:\huggingface_cache\hub`).
+- 2026-11-04 (amendment 2, outcome only, no change to the protocol): Stage 1 LM-only learning-rate grid, `Qwen/Qwen2-1.5B-Instruct`, Synth, seed 82, trained on `pilot_train`, scored on `pilot_val` (400 rows, `eval_exact.py`): 2e-4 = 86.00% (344/400), 4e-4 = 86.25% (345/400), 8e-4 = 85.75% (343/400). By the tie rule in section 4 (within 0.5 points goes to the smaller rate), the learning rate for Qwen2 on Synth is **2e-4**. One seed and 400 rows: the three rates are not statistically separable. Run data hashes (train, validation, test) match section 3 for all three runs. Amendment 1 is commit `235e3b9` (committed 2026-11-04 14:01:20 +06:00); the first run folder was created at 14:04:36, so it preceded the runs.
+- 2026-11-04 (formatting fix, no change of wording): in commit `235e3b9` the amendment 1 line was joined to the Scorers checklist line; the line break is restored in the commit that adds amendment 2.
