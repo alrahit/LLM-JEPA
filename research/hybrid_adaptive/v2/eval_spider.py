@@ -35,7 +35,12 @@ def generate_all(args, rows):
     model.eval()
     prompts = [tok.apply_chat_template(r["messages"][:2], tokenize=False, add_generation_prompt=True) for r in rows]
     order = sorted(range(len(prompts)), key=lambda i: len(prompts[i]))
-    eos_ids = [tok.convert_tokens_to_ids("<|im_end|>"), tok.convert_tokens_to_ids("<|endoftext|>")]
+    ge = model.generation_config.eos_token_id
+    eos_ids = {int(x) for x in ([ge] if isinstance(ge, int) else (ge or []))}
+    if tok.eos_token_id is not None:
+        eos_ids.add(int(tok.eos_token_id))
+    eos_ids = sorted(eos_ids)
+    print("stop token ids:", eos_ids, [tok.convert_ids_to_tokens(i) for i in eos_ids], flush=True)
     preds = [None] * len(rows)
     t0 = time.time()
     for s in range(0, len(order), args.batch_size):
