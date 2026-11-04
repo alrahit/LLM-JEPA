@@ -83,4 +83,4 @@ Runs are excluded only for hash mismatch. Failed or diverged runs are reported, 
 - [ ] Qwen2-1.5B-Instruct revision hash.
 - [ ] Llama-3.2-1B-Instruct revision hash, chat-template date handling, last-token offset, memory and speed.
 - [ ] Stage 1 learning-rate results per dataset and model (outcomes, not changes to the protocol).
-- [ ] Scorers for GSM8K, Rotten Tomatoes, Yelp, NQ-Open, HellaSwag.
+- [ ] Scorers for GSM8K, Rotten Tomatoes, Yelp, NQ-Open, HellaSwag.- 2026-11-04 (amendment 1): `Qwen/Qwen2-1.5B-Instruct` revision hash `ba1cf1846d7df0a0591d6c00649f57e798519da8` (Hugging Face cache at `D:\huggingface_cache\hub`).
