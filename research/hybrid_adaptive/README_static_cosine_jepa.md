@@ -14,16 +14,16 @@ Qwen/Qwen2-1.5B-Instruct (revision ba1cf1846d7df0a0591d6c00649f57e798519da8), Lo
 |---|---|---|
 | Accuracy, JEPA minus LM-only (points, 95% interval) | +0.317 [-0.100, +0.733] | +0.100 [-0.667, +0.850] |
 | H0 (at least 1.0 pt, interval above 0) | not met | not met |
-| Held-out linearity, JEPA minus LM-only (95% interval) | -0.1858 [-0.1976, -0.1738] | -0.1731 [-0.1852, -0.1610] |
-| H1 (positive, interval above 0) | not met | not met |
+| Held-out linearity, JEPA minus LM-only (95% interval; JEPA values not interpretable, see below) | -0.1858 [-0.1976, -0.1738] | -0.1731 [-0.1852, -0.1610] |
+| H1 (positive, interval above 0) | not supported; JEPA-arm values not interpretable (amendment 14) | same |
 | Mean cosine between the two views, JEPA arm | 0.9999 | 1.0000 |
 
 Collapse: all 22 static runs reached cos_pos and cos_neg of about 1. Lower learning rates (4e-5, 1e-5) and k = 3 delayed the collapse within 200 steps but did not prevent it (amendments 10 and 11).
 ## Why this does not reach the goal
-In this setup the cosine loss is satisfied by collapsing both views to almost the same point (user-view variance about 2.2 for JEPA against about 1e4 for LM-only), accuracy does not improve by the pre-registered margin, and the held-out linear relation between the views is weaker than with LM-only training. We did not test whether preventing collapse would give a gain; that is not claimed either way.
+In this setup the cosine loss is satisfied by collapsing both views to almost the same point (user-view variance about 2.2 for JEPA against about 1e4 for LM-only), accuracy does not improve by the pre-registered margin, and the measured held-out linear relation between the views is weaker than with LM-only training; however, a bf16 repeatability check (amendment 14) found that rounding noise is 13% to 50% of the variance of the JEPA-arm embeddings, so those linearity values cannot be interpreted and whether JEPA changes linearity is not determined by these data. We did not test whether preventing collapse would give a gain; that is not claimed either way.
 
 ## Limits
-One model size, LoRA only, two of the eight planned datasets, three seeds, embeddings in bf16 (noise floor of the collapsed arm not measured), no loss dropout, no shuffled-pair control, no predictor-token or linearity-only ablation (H2 not tested). Spider, the other datasets and Llama models are not run. These results do not show that JEPA never helps; they show that this static cosine recipe did not help here.
+One model size, LoRA only, two of the eight planned datasets, three seeds, embeddings in bf16 (rounding noise is 13% to 50% of the variance of the collapsed arm, so its linearity values are not interpretable; no higher-precision re-embedding done), no loss dropout, no shuffled-pair control, no predictor-token or linearity-only ablation (H2 not tested). Spider, the other datasets and Llama models are not run. These results do not show that JEPA never helps; they show that this static cosine recipe did not help here.
 
 ## Files
 - `PREREGISTRATION_v1.md`: protocol, selection rules and all outcomes, amendments 1 to 12.
