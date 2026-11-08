@@ -49,3 +49,8 @@ Run names in older files: "LinAlign" = LM-only run, "SFT" = cosine-JEPA lambda 0
 
 ## Attribution
 Built on the LLM-JEPA code base; keep the upstream license and notices (see the repository root).
+
+## v2: pre-registered replication of static cosine-JEPA (negative result so far)
+Branch `research/static-cosine-jepa`. Full write-up: `README_static_cosine_jepa.md`; protocol and outcomes: `PREREGISTRATION_v1.md` (amendments 1 to 12); code: `v2/`.
+
+Qwen2-1.5B-Instruct, LoRA rank 32, seeds 82, 23, 37, Synth and Turk. Accuracy gain of static cosine-JEPA over LM-only: +0.317 pts (Synth) and +0.100 pts (Turk), neither reaching the pre-registered 1.0 pt rule. Held-out linearity of the user and assistant embeddings is lower with JEPA than with LM-only (-0.1858 on Synth, -0.1731 on Turk). All 22 static runs collapsed (cosine about 1). Not done: other datasets, other model families, loss dropout, shuffled-pair control.
