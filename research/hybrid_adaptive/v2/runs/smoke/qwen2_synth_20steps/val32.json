@@ -1,0 +1,243 @@
+{
+ "args": {
+  "predict": "model",
+  "model": "Qwen/Qwen2-1.5B-Instruct",
+  "adapter": "runs\\smoke\\qwen2_synth_20steps\\adapter_epoch1",
+  "data": "data\\synth\\pilot_val.jsonl",
+  "out": "runs\\smoke\\qwen2_synth_20steps\\val32.json",
+  "max_examples": 32,
+  "batch_size": 16,
+  "max_new_tokens": 128
+ },
+ "summary": {
+  "n": 32,
+  "correct": 5,
+  "exact_match": 0.15625
+ },
+ "examples": [
+  {
+   "idx": 0,
+   "db_id": "",
+   "gold": "((.*)(([A-Z])|([AEIOUaeiou]))).*(.).*",
+   "pred": "((.*)([A-Z]))|([AEIOUaeiou]).*",
+   "strict": false
+  },
+  {
+   "idx": 1,
+   "db_id": "",
+   "gold": "(dog).*(([a-z])|(.)).*",
+   "pred": "((dog).*([a-z])|(.))",
+   "strict": false
+  },
+  {
+   "idx": 2,
+   "db_id": "",
+   "gold": "(dog).*(([a-z])&([AEIOUaeiou])&([A-Z])).*",
+   "pred": "((dog).*([a-z])&([AEIOUaeiou])&([A-Z]).*",
+   "strict": false
+  },
+  {
+   "idx": 3,
+   "db_id": "",
+   "gold": "(([AEIOUaeiou]){7,}).*([0-9]).*",
+   "pred": "([AEIOUaeiou]){7,}",
+   "strict": false
+  },
+  {
+   "idx": 4,
+   "db_id": "",
+   "gold": "(([AEIOUaeiou]){6,})&(([A-Za-z])|([a-z]))",
+   "pred": "([AEIOUaeiou]){6,}([A-Za-z])|([a-z])",
+   "strict": false
+  },
+  {
+   "idx": 5,
+   "db_id": "",
+   "gold": "(dog).*(([a-z])&(truck)&([A-Za-z])).*",
+   "pred": "((dog).*([a-z]).*truck.*([A-Za-z]).*)",
+   "strict": false
+  },
+  {
+   "idx": 6,
+   "db_id": "",
+   "gold": "(([0-9])|(.)|([A-Z])).*(dog).*",
+   "pred": "(([0-9])|(.))|([A-Z]).*dog.*",
+   "strict": false
+  },
+  {
+   "idx": 7,
+   "db_id": "",
+   "gold": "([A-Za-z]).*((.*)(.)).*",
+   "pred": "([A-Za-z]).*([A-Za-z]).*",
+   "strict": false
+  },
+  {
+   "idx": 8,
+   "db_id": "",
+   "gold": "(\\b(dog)|([0-9])\\b){4,}",
+   "pred": "\\b((dog)|(.*[0-9].*){4,}\\b",
+   "strict": false
+  },
+  {
+   "idx": 9,
+   "db_id": "",
+   "gold": "(dog).*((truck)&([AEIOUaeiou])&([a-z])).*",
+   "pred": "((dog).*((truck)&([AEIOUaeiou])&([a-z])).*",
+   "strict": false
+  },
+  {
+   "idx": 10,
+   "db_id": "",
+   "gold": "(dog.*[0-9].*).*(.).*",
+   "pred": "((dog.*[0-9].*).*(.*)",
+   "strict": false
+  },
+  {
+   "idx": 11,
+   "db_id": "",
+   "gold": "((.).*([A-Za-z]).*)|(.*[0-9].*)",
+   "pred": "(.).*([A-Za-z])|(.*)",
+   "strict": false
+  },
+  {
+   "idx": 12,
+   "db_id": "",
+   "gold": "\\b([A-Z])|([AEIOUaeiou])|(dog)\\b",
+   "pred": "\\b([A-Z])|([AEIOUaeiou])|(dog)\\b",
+   "strict": true
+  },
+  {
+   "idx": 13,
+   "db_id": "",
+   "gold": "(([A-Z])(.*)).*((dog)|(truck)).*",
+   "pred": "(([A-Z].*dog.*).*|(.truck.*))",
+   "strict": false
+  },
+  {
+   "idx": 14,
+   "db_id": "",
+   "gold": "(([A-Z]){4,}).*([A-Za-z]).*",
+   "pred": "(([A-Z]){4,}).*([A-Za-z]).*",
+   "strict": true
+  },
+  {
+   "idx": 15,
+   "db_id": "",
+   "gold": ".*([a-z])|(.).*",
+   "pred": ".*(.*[a-z].*|(.)).*",
+   "strict": false
+  },
+  {
+   "idx": 16,
+   "db_id": "",
+   "gold": "([a-z].*..*).*([A-Z]).*",
+   "pred": "([a-z].*..*).*([A-Z]).*",
+   "strict": true
+  },
+  {
+   "idx": 17,
+   "db_id": "",
+   "gold": "(..*[a-z].*){5,}",
+   "pred": "((.*[A-Za-z].*){5,})",
+   "strict": false
+  },
+  {
+   "idx": 18,
+   "db_id": "",
+   "gold": "([A-Za-z].*[AEIOUaeiou].*).*([0-9]).*",
+   "pred": "([A-Za-z].*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*..*",
+   "strict": false
+  },
+  {
+   "idx": 19,
+   "db_id": "",
+   "gold": "(.*)(([AEIOUaeiou]){5,})",
+   "pred": "((.*)(.*[AEIOUaeiou].*){5,})",
+   "strict": false
+  },
+  {
+   "idx": 20,
+   "db_id": "",
+   "gold": "((.*)(dog.*truck.*))*",
+   "pred": "((.*)(dog.*truck.*+))*",
+   "strict": false
+  },
+  {
+   "idx": 21,
+   "db_id": "",
+   "gold": "(([a-z])|([A-Z])){2,}",
+   "pred": "(([a-z])|([A-Z])){2,}",
+   "strict": true
+  },
+  {
+   "idx": 22,
+   "db_id": "",
+   "gold": "\\b~([a-z].*[A-Z].*)\\b",
+   "pred": "\\b(.*)\\b((.*[a-z].*([A-Z]).*)",
+   "strict": false
+  },
+  {
+   "idx": 23,
+   "db_id": "",
+   "gold": "(dog.*[A-Za-z].*)|(~(truck))",
+   "pred": "((dog.*[A-Za-z].*)|(~(truck)))",
+   "strict": false
+  },
+  {
+   "idx": 24,
+   "db_id": "",
+   "gold": "\\b(dog)&(truck)&([A-Z])\\b",
+   "pred": "\\b((dog)&(truck)&([A-Z])).*",
+   "strict": false
+  },
+  {
+   "idx": 25,
+   "db_id": "",
+   "gold": ".*(~(dog))|([0-9]).*",
+   "pred": "~((.*(dog).*)|([0-9]))",
+   "strict": false
+  },
+  {
+   "idx": 26,
+   "db_id": "",
+   "gold": "\\bdog.*[0-9].*\\b",
+   "pred": "\\b((dog.*[0-9].*)\\b)",
+   "strict": false
+  },
+  {
+   "idx": 27,
+   "db_id": "",
+   "gold": "~(([0-9])|([AEIOUaeiou])|(dog))",
+   "pred": "~(([0-9])|([AEIOUaeiou])|(dog))",
+   "strict": true
+  },
+  {
+   "idx": 28,
+   "db_id": "",
+   "gold": ".*([A-Z])&([a-z])&([AEIOUaeiou]).*",
+   "pred": ".*(([A-Z])&([a-z])&([AEIOUaeiou])).*",
+   "strict": false
+  },
+  {
+   "idx": 29,
+   "db_id": "",
+   "gold": "([A-Z].*[0-9].*){3,}",
+   "pred": "([A-Z].*([0-9]){3,}).*",
+   "strict": false
+  },
+  {
+   "idx": 30,
+   "db_id": "",
+   "gold": "(\\b(.)|(dog)|([AEIOUaeiou])\\b){6,}",
+   "pred": "\\b((.)|((dog){6}))\\b",
+   "strict": false
+  },
+  {
+   "idx": 31,
+   "db_id": "",
+   "gold": "(([AEIOUaeiou])|([A-Z])){5,}",
+   "pred": "([AEIOUaeiou])|([A-Z]){5,}",
+   "strict": false
+  }
+ ]
+}

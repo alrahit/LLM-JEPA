@@ -8,3 +8,11 @@ datasets/gsm8k_test_train.jsonl
 results/spider/model-*/
 datasets/spider_test_test.jsonl
 datasets/spider_test_train.jsonl
+
+# v2 large outputs (adapters and embedding dumps stay local; small evidence files are tracked)
+research/hybrid_adaptive/v2/emb/
+research/hybrid_adaptive/v2/data/
+research/hybrid_adaptive/v2/runs/**/adapter*/
+research/hybrid_adaptive/v2/runs/**/*.safetensors
+research/hybrid_adaptive/v2/runs/**/*.pt
+research/hybrid_adaptive/v2/runs/**/*.bin

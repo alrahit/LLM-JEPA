@@ -1,0 +1,30 @@
+{
+ "arm": "sft",
+ "lam": 0.0,
+ "k": 0,
+ "last_token": -3,
+ "model": "Qwen/Qwen2-1.5B-Instruct",
+ "train_file": "data\\turk\\pilot_train.jsonl",
+ "out_dir": "runs\\stage1\\qwen2_turk_sft_lr8e-4_s82",
+ "lr": 0.0008,
+ "epochs": 4,
+ "seed": 82,
+ "lora_rank": 32,
+ "micro_bs": 4,
+ "accum": 4,
+ "max_grad_norm": 1.0,
+ "max_length": 512,
+ "log_every": 10,
+ "max_steps": 0,
+ "device": "cuda",
+ "dtype": "bf16",
+ "no_grad_ckpt": false,
+ "save_every_epoch": false,
+ "val_file": "data\\turk\\pilot_val.jsonl",
+ "test_file": "D:\\LLM-JEPA-clean\\datasets\\turk_test.jsonl",
+ "data_sha256": {
+  "train_file": "ceccf47caa7cb9031151571d45e423acc219ed7e9be59790ed5080e4cb62bd9d",
+  "val_file": "171d3774dd19d525c7defaa103693d6772881dc70ea2fc3ea8b227de594ed151",
+  "test_file": "cc6c74bcb005386ceac2dde6574f6cc2932e562b8621be109b7cb1a70fb95920"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "steps": 1900,
+ "seconds": 7498.0,
+ "samples_per_s": 4.05,
+ "last": {
+  "step": 1900,
+  "epoch": 4,
+  "lr": 1.0526315789474161e-07,
+  "lam": 2.0,
+  "lm_loss": 0.013732278003279148,
+  "grad_norm": 0.1542464643716812,
+  "elapsed_s": 7497.9,
+  "jepa_loss": 4.949048161506653e-05,
+  "cos_pos": 1.0,
+  "cos_neg": 1.0,
+  "retrieval_acc": 0.25,
+  "peak_mem_gb": 4.05
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "arm": "static",
+ "lam": 1.0,
+ "k": 1,
+ "last_token": -3,
+ "model": "Qwen/Qwen2-1.5B-Instruct",
+ "train_file": "data\\synth\\pilot_train.jsonl",
+ "out_dir": "runs\\stage1\\qwen2_synth_static_k1_lam1_lr2e-4_s82",
+ "lr": 0.0002,
+ "epochs": 4,
+ "seed": 82,
+ "lora_rank": 32,
+ "micro_bs": 4,
+ "accum": 4,
+ "max_grad_norm": 1.0,
+ "max_length": 512,
+ "log_every": 10,
+ "max_steps": 0,
+ "device": "cuda",
+ "dtype": "bf16",
+ "no_grad_ckpt": false,
+ "save_every_epoch": false,
+ "val_file": "data\\synth\\pilot_val.jsonl",
+ "test_file": "D:\\LLM-JEPA-clean\\datasets\\synth_test.jsonl",
+ "data_sha256": {
+  "train_file": "48027baf62e8c394a377f9193f5c8ec5b911bd9e8edf0ad22735c87a704c8e6c",
+  "val_file": "315694d2f5035d0779348e499baf7feac141086bb38554c9765cc8170976d1a9",
+  "test_file": "f94460595708f1661e1be088f6c4e2728d5272556e23537c9eb393f36c065c13"
+ }
+}

@@ -1,0 +1,6 @@
+Environment used for all v2 runs
+Python: Python 3.12.2
+Venv: D:\LLM_JEPA\.venv (pinned packages: requirements.v2.lock.txt)
+GPU, driver, memory: NVIDIA GeForce RTX 4050 Laptop GPU, 551.76, 6141 MiB
+OS: Windows 11
+HF_HUB_OFFLINE=1; model Qwen/Qwen2-1.5B-Instruct revision ba1cf1846d7df0a0591d6c00649f57e798519da8
